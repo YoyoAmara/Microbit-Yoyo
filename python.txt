@@ -1,0 +1,179 @@
+"""
+
+Hi this project is made by Yoyo, Fairly use allowed. But should mention the creator's name (Yoyo). Cannot sell through internet or use it on Youtube without permission. You can edit the script and change this setup into advanced programme. Thank you. :))
+
+"""
+# P0 = Min temp/light/sound
+# P1 = current temp/light/sound
+# P2 = Max temp/light/sound
+# 
+# After 10 runs this will return to main section , also resetted 
+# some variables (mentioned in return time 1 function)
+def sub_selection_code():
+    global Time, word1, word2, word3
+    Time = 2
+    if Time == 2:
+        for index in range(10):
+            if Main_selection == "A":
+                word1 = "min temp."
+                word2 = "current temp."
+                word3 = "max temp."
+            elif Main_selection == "B":
+                word1 = "min light level"
+                word2 = "current light level"
+                word3 = "max light level"
+            elif Main_selection == "C":
+                word1 = "min sound."
+                word2 = "current sound."
+                word3 = "max sound"
+            basic.show_string("Press P0 to check " + word1)
+            basic.show_string("Press P1 to check " + word2)
+            basic.show_string("Press P2 to check " + word3)
+            if input.pin_is_pressed(TouchPin.P0):
+                if Main_selection == "A":
+                    for index2 in range(10):
+                        basic.show_string("" + str(min_temp) + "'C")
+                    sub_selection_code()
+                elif Main_selection == "B":
+                    for index3 in range(10):
+                        basic.show_string("" + str((min_light)))
+                    sub_selection_code()
+                elif Main_selection == "C":
+                    for index4 in range(10):
+                        basic.show_string("" + str((current_sound)))
+                    sub_selection_code()
+            elif input.pin_is_pressed(TouchPin.P1):
+                if Main_selection == "A":
+                    for index5 in range(20):
+                        basic.show_string("" + str(current_temp) + "'C")
+                    sub_selection_code()
+                elif Main_selection == "B":
+                    for index6 in range(20):
+                        basic.show_string("" + str((current_light)))
+                    sub_selection_code()
+                elif Main_selection == "C":
+                    for index7 in range(20):
+                        basic.show_string("" + str((current_sound)))
+                    sub_selection_code()
+            elif input.pin_is_pressed(TouchPin.P2):
+                if Main_selection == "A":
+                    for index8 in range(10):
+                        basic.show_string("" + str(max_temp) + "'C")
+                    sub_selection_code()
+                elif Main_selection == "B":
+                    for index9 in range(10):
+                        basic.show_string("" + str((max_light)))
+                    sub_selection_code()
+                elif Main_selection == "C":
+                    for index10 in range(10):
+                        basic.show_string("" + str((max_sound)))
+                    sub_selection_code()
+        return_time_1()
+# Function for light sensor readings
+def light2():
+    global current_light, min_light, max_light
+    current_light = input.light_level()
+    if current_light < min_light:
+        min_light = current_light
+    elif current_light > max_light:
+        max_light = current_light
+# Works only in Microbit V2.0 +
+
+def on_logo_long_pressed():
+    reset_data()
+input.on_logo_event(TouchButtonEvent.LONG_PRESSED, on_logo_long_pressed)
+
+# Resets all data
+def reset_data():
+    global current_light, current_temp, max_light, max_temp, min_light, min_temp, Time, Main_selection, word1, word2, word3
+    current_light = input.light_level()
+    current_temp = input.temperature()
+    max_light = input.light_level()
+    max_temp = input.temperature()
+    min_light = input.light_level()
+    min_temp = input.temperature()
+    Time = 0
+    Main_selection = ""
+    word1 = ""
+    word2 = ""
+    word3 = ""
+# A = temperature (variable = A)
+# 
+# B = light level
+# (variable = B)
+# 
+# A and B = sound (variable = C)
+def Main_selection_code():
+    global Time, Main_selection
+    Time = 1
+    basic.show_string("Press A to check temperature")
+    basic.show_string("Press B to check light level")
+    basic.show_string("Press both A and B to check sound")
+    if Time == 1:
+        if input.button_is_pressed(Button.AB):
+            Main_selection = "C"
+            sub_selection_code()
+        elif input.button_is_pressed(Button.B):
+            Main_selection = "B"
+            sub_selection_code()
+        elif input.button_is_pressed(Button.A):
+            Main_selection = "A"
+            sub_selection_code()
+        else:
+            basic.clear_screen()
+            basic.pause(5000)
+            basic.pause(5000)
+            Main_selection_code()
+# Reset values of section values, but keeps sensor values
+def return_time_1():
+    global Time, word1, word2, word3, Main_selection
+    Time = 1
+    word1 = ""
+    word2 = ""
+    word3 = ""
+    Main_selection = ""
+# Function for temperature sensor readings
+def temp():
+    global current_temp, min_temp, max_temp
+    current_temp = input.temperature()
+    if current_temp < min_temp:
+        min_temp = current_temp
+    elif current_temp > max_temp:
+        max_temp = current_temp
+# Function for sound sensor readings.
+# Sound function is only support for Microbit V2.0 +
+def sound():
+    global current_sound, min_sound, max_sound
+    current_sound = input.sound_level()
+    if current_sound < min_sound:
+        min_sound = current_sound
+    elif current_sound > max_sound:
+        max_sound = current_sound
+# Start up of the programme
+min_sound = 0
+max_sound = 0
+max_light = 0
+max_temp = 0
+current_light = 0
+current_temp = 0
+current_sound = 0
+min_light = 0
+min_temp = 0
+word3 = ""
+word2 = ""
+word1 = ""
+Main_selection = ""
+Time = 0
+reset_data()
+temp()
+light2()
+sound()
+# run the main selection function
+Main_selection_code()
+# Loop the reading of sensors
+
+def on_forever():
+    temp()
+    light2()
+    sound()
+basic.forever(on_forever)
