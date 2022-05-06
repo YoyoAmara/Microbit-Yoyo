@@ -1,0 +1,195 @@
+/**
+ * Hi this project is made by Yoyo, Fairly use allowed. But should mention the creator's name (Yoyo). Cannot sell through internet or use it on Youtube without permission. You can edit the script and change this setup into advanced programme. Thank you. :))
+ */
+// P0 = Min temp/light/sound
+// P1 = current temp/light/sound
+// P2 = Max temp/light/sound
+// 
+// After 10 runs this will return to main section , also resetted 
+// some variables (mentioned in return time 1 function)
+function sub_selection_code () {
+    Time = 2
+    if (Time == 2) {
+        for (let index = 0; index < 10; index++) {
+            if (Main_selection == "A") {
+                word1 = "min temp."
+                word2 = "current temp."
+                word3 = "max temp."
+            } else if (Main_selection == "B") {
+                word1 = "min light level"
+                word2 = "current light level"
+                word3 = "max light level"
+            } else if (Main_selection == "C") {
+                word1 = "min sound."
+                word2 = "current sound."
+                word3 = "max sound"
+            }
+            basic.showString("Press P0 to check " + word1)
+            basic.showString("Press P1 to check " + word2)
+            basic.showString("Press P2 to check " + word3)
+            if (input.pinIsPressed(TouchPin.P0)) {
+                if (Main_selection == "A") {
+                    for (let index = 0; index < 10; index++) {
+                        basic.showString("" + min_temp + "'C")
+                    }
+                    sub_selection_code()
+                } else if (Main_selection == "B") {
+                    for (let index = 0; index < 10; index++) {
+                        basic.showString("" + (min_light))
+                    }
+                    sub_selection_code()
+                } else if (Main_selection == "C") {
+                    for (let index = 0; index < 10; index++) {
+                        basic.showString("" + (current_sound))
+                    }
+                    sub_selection_code()
+                }
+            } else if (input.pinIsPressed(TouchPin.P1)) {
+                if (Main_selection == "A") {
+                    for (let index = 0; index < 20; index++) {
+                        basic.showString("" + current_temp + "'C")
+                    }
+                    sub_selection_code()
+                } else if (Main_selection == "B") {
+                    for (let index = 0; index < 20; index++) {
+                        basic.showString("" + (current_light))
+                    }
+                    sub_selection_code()
+                } else if (Main_selection == "C") {
+                    for (let index = 0; index < 20; index++) {
+                        basic.showString("" + (current_sound))
+                    }
+                    sub_selection_code()
+                }
+            } else if (input.pinIsPressed(TouchPin.P2)) {
+                if (Main_selection == "A") {
+                    for (let index = 0; index < 10; index++) {
+                        basic.showString("" + max_temp + "'C")
+                    }
+                    sub_selection_code()
+                } else if (Main_selection == "B") {
+                    for (let index = 0; index < 10; index++) {
+                        basic.showString("" + (max_light))
+                    }
+                    sub_selection_code()
+                } else if (Main_selection == "C") {
+                    for (let index = 0; index < 10; index++) {
+                        basic.showString("" + (max_sound))
+                    }
+                    sub_selection_code()
+                }
+            }
+        }
+        return_time_1()
+    }
+}
+// Function for light sensor readings
+function light2 () {
+    current_light = input.lightLevel()
+    if (current_light < min_light) {
+        min_light = current_light
+    } else if (current_light > max_light) {
+        max_light = current_light
+    }
+}
+// Works only in Microbit V2.0 +
+input.onLogoEvent(TouchButtonEvent.LongPressed, function () {
+    reset_data()
+})
+// Resets all data
+function reset_data () {
+    current_light = input.lightLevel()
+    current_temp = input.temperature()
+    max_light = input.lightLevel()
+    max_temp = input.temperature()
+    min_light = input.lightLevel()
+    min_temp = input.temperature()
+    Time = 0
+    Main_selection = ""
+    word1 = ""
+    word2 = ""
+    word3 = ""
+}
+// A = temperature (variable = A)
+// 
+// B = light level
+// (variable = B)
+// 
+// A and B = sound (variable = C)
+function Main_selection_code () {
+    Time = 1
+    basic.showString("Press A to check temperature")
+    basic.showString("Press B to check light level")
+    basic.showString("Press both A and B to check sound")
+    if (Time == 1) {
+        if (input.buttonIsPressed(Button.AB)) {
+            Main_selection = "C"
+            sub_selection_code()
+        } else if (input.buttonIsPressed(Button.B)) {
+            Main_selection = "B"
+            sub_selection_code()
+        } else if (input.buttonIsPressed(Button.A)) {
+            Main_selection = "A"
+            sub_selection_code()
+        } else {
+            basic.clearScreen()
+            basic.pause(5000)
+            basic.pause(5000)
+            Main_selection_code()
+        }
+    }
+}
+// Reset values of section values, but keeps sensor values
+function return_time_1 () {
+    Time = 1
+    word1 = ""
+    word2 = ""
+    word3 = ""
+    Main_selection = ""
+}
+// Function for temperature sensor readings
+function temp () {
+    current_temp = input.temperature()
+    if (current_temp < min_temp) {
+        min_temp = current_temp
+    } else if (current_temp > max_temp) {
+        max_temp = current_temp
+    }
+}
+// Function for sound sensor readings.
+// Sound function is only support for Microbit V2.0 +
+function sound () {
+    current_sound = input.soundLevel()
+    if (current_sound < min_sound) {
+        min_sound = current_sound
+    } else if (current_sound > max_sound) {
+        max_sound = current_sound
+    }
+}
+// Start up of the programme
+let min_sound = 0
+let max_sound = 0
+let max_light = 0
+let max_temp = 0
+let current_light = 0
+let current_temp = 0
+let current_sound = 0
+let min_light = 0
+let min_temp = 0
+let word3 = ""
+let word2 = ""
+let word1 = ""
+let Main_selection = ""
+let Time = 0
+reset_data()
+temp()
+light2()
+sound()
+// run the main selection function
+Main_selection_code()
+// Loop the reading of sensors
+basic.forever(function () {
+    temp()
+    light2()
+    sound()
+})
